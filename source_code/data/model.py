@@ -34,7 +34,7 @@ class FaceDetectionModel(LightningModule):
 		return self.model(x)
 	
 	def training_step(self, batch, batch_idx):
-		if len(batch) == 0 : return torch.tensor(0.)
+		if len(batch) == 0 : return torch.tensor(0.0, requires_grad=True)
 		images, targets = batch
 		targets = [{k: v for k, v in t.items()} for t in targets]
 		loss_dict = self.model(images, targets)
