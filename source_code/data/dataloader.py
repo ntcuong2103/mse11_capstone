@@ -1,14 +1,11 @@
-import sys
-sys.path.append('../')
-
 from typing import Optional
 from torch.utils.data.dataloader import DataLoader
 import pandas as pd
 from dataset import ImageDetectionDataset
 import pytorch_lightning as pl
 from albumentations import Compose, RandomCrop, BboxParams
-from utils.constants import Constants
-import utils.utils as utils
+from constants import Constants
+import utils as utils
 
 MODE = Constants.Mode()
 
@@ -16,7 +13,7 @@ class FaceDataLoader(pl.LightningDataModule):
 	def __init__(self,         
 		batch_size: int = 10,
 		workers: int = 5,
-		img_size: int = 512,
+		img_size: int = 256,
 		):
 		super().__init__()
 		self.batch_size = batch_size
@@ -32,8 +29,8 @@ class FaceDataLoader(pl.LightningDataModule):
 							RandomCrop(self.img_size, self.img_size, p=1.0),
 							], bbox_params=BboxParams(format='pascal_voc', min_visibility=0.85, label_fields=None))
 
-			self.train_dataset = ImageDetectionDataset(mode=MODE.DEMO, transforms=transforms)
-			self.val_dataset = ImageDetectionDataset(mode=MODE.VALDEMO)
+			self.train_dataset = ImageDetectionDataset(mode=MODE.TRAIN, transforms=transforms)
+			self.val_dataset = ImageDetectionDataset(mode=MODE.VALIDATE, transforms=transforms)
 	   
 		# if stage == "test" or stage is None:
 		# 	self.test_dataset = ImageDetectionDataset(mode=MODE.TEST, image_dir=self.val_data)
@@ -57,12 +54,3 @@ class FaceDataLoader(pl.LightningDataModule):
 	def test_dataloader(self):
 		return self.val_dataloader()
 
-
-
-# if __name__ == "__main__":
-#     dm = DataLoader()
-#     dm.setup()
-#     trainloader = dm.train_dataloader()
-#     for img, label in trainloader:
-#         print()
-#         pass 
